@@ -168,18 +168,18 @@
 
 			}
 			snakeArr.unshift(newArr);//加入新的蛇头数组到数组中首位
-			if(!isDie()){
+			// if(!isDie()){
 				drawSnake(snakeArr);
-			}
+			// }
 			
 		}
 		var die=false;
 		function isDie(){
 			
-			var ex=snakeArr[snakeArr.length-1][0];
-			var ey=snakeArr[snakeArr.length-1][1];
-			console.log(ey,col-snakeArr.length)
-			if(ey>col-snakeArr.length||ey<0||ex>row-snakeArr.length||ex<0){
+			var ex=snakeArr[0][0];
+			var ey=snakeArr[0][1];
+			console.log(ey,col)
+			if(ey>col-1||ey<0||ex>row-1||ex<0){
 				die=true;
 			}
 			return die;
@@ -193,7 +193,10 @@
 				if(isDie()){
 					console.log(isDie())
 					clearInterval(timer);
-					var snakeArr=new Array();
+					snakeArr=new Array();
+					initSnake()
+					 drawSnake(snakeArr)
+					 die=false;
 				}
 			},500);
 		}
@@ -201,6 +204,8 @@
 			var e=event||window.event;
 			switch(e.keyCode){
 				case 40://下
+				var ey=snakeArr[0][1];
+			console.log(ey,col-snakeArr.length)
 						if(curDirection!='top'){
 							if(direction!='bottom'){
 								direction='bottom';
@@ -214,7 +219,8 @@
 						
 						break;
 				case 39://右
-						
+						var ey=snakeArr[snakeArr.length-1][1];
+			console.log(ey,col-snakeArr.length)
 						if(curDirection!='left'){
 							if(direction!='right'){
 								direction='right';
@@ -228,7 +234,8 @@
 						}
 						break;
 				case 38://上
-						
+						var ey=snakeArr[snakeArr.length-1][1];
+			console.log(ey,col-snakeArr.length)
 						if(curDirection!='bottom'){
 							if(direction!='top'){
 								direction='top';
@@ -242,6 +249,8 @@
 						}
 						break;
 				case 37: //左
+				var ey=snakeArr[snakeArr.length-1][1];
+			console.log(ey,col-snakeArr.length)
 						if(direction!='right'&&direction!='left'){
 								direction='left';
 								curDirection='left';
