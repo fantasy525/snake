@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>贪吃蛇</title>
+	<style type="text/css">
+		.wrap{
+			margin:0 auto;
+		}
+		.map{
+		
+			
+			border:1px solid black;
+			border-collapse: collapse;
+			background-color:gray;
+		}
+		.map tr{
+			
+		}
+		.map td {
+			width:20px;
+			height: 20px;
+			border:1px solid black;
+			border-collapse: collapse;
+		}
+	</style>
+		
+	<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+	<div class="wrap">
+		<table class="map">
+			
+		</table>
+	</div>
+	<script>
+			var col=30;//列数;
+			var row=20;//行数
+			var map=$('.map');
+		
+		function makeMap(){
+			
+			for(var i=0;i<row;i++){
+				var cTr=document.createElement('tr');
+				for(var j=0;j<col;j++){
+					var cTd=document.createElement('td');
+					cTr.appendChild(cTd);
+				}
+				map.append(cTr);
+			}
+			$('.wrap').width($('td').eq(0).outerWidth()*col);
+		}
+		var curRow=4;
+		var curCol=2;//蛇的长度
+		var snakeArr=new Array();//保存蛇数据的数组
+		//[[0,0],[0,1],[0,2],[0,3]]
+		function initSnake(){//
+			var r=0;
+			var c=3;
+			 direction='right';
+		 	curDirection='right';
+			for( var rows=0;rows<curRow;rows++){
+				snakeArr[rows]=new Array();
+				for(var cols=0;cols<curCol;cols++){
+					if(cols==0){
+						snakeArr[rows][cols]=r;
+					}
+					else{
+						snakeArr[rows][cols]=c;
+						c--;
+					}
+
+				}
+			}
+		}
+		function eatFood(){
+			//debugger;
+			var ex=snakeArr[0][0];
+			var ey=snakeArr[0][1];
+			var fx=food[0][0];
+			var fy=food[0][1];
+			var isEat=false;
+			switch(direction){
+				case 'right':
+							if(fx==ex&&ey+1==fy){
+									isEat=true;
+								}
+							break;
+				case 'left':
+							if(fx==ex&&ey-1==fy){
+									isEat=true;
+								}
+								break;
+				case 'top':
+							if(ex-1==fx&&ey==fy){
+									isEat=true;
+								}
+								break;
+				case 'bottom':
+							if(ex+1==fx&&ey==fy){
+									isEat=true;
+								}
+								break;
+				default:
+						break;
+			}
+				if(isEat){
+					console.log("吃到了")
+					snakeArr.unshift(food[0]);//向数组开头加入食物的位置数组
+					//drawSnake(snakeArr);
+					makeFood();
+					//debugger;
+					//drawFood();
+				}
+				return isEat;
+			
+		}
+		function drawSnake(snakeArr){
+			$('tr').children('td').css({
+							backgroundColor:"gray"
+						});
+			drawFood();
+			for(var i=0;i<snakeArr.length;i++){
+				var a;
+				var b;
+				
+				a=snakeArr[i][0];
+				b=snakeArr[i][1];
+						
+				$('tr').eq(a).children('td').eq(b).css({
+							backgroundColor:"green"
+						})
+			}
+			
+		}
+		function drawFood(){
+				var a;
+				var b;
+				 a=food[0][0];
+				 b=food[0][1];
+			$('tr').eq(a).children('td').eq(b).css({
+				backgroundColor:"orange"
+			})
+		}
+		var timer=null;
+		var direction='right';
+		var curDirection='right';
+		function makeSnake(direction){
+			//debugger;
+			 var newArr=snakeArr[0].concat();//复制蛇头的数组
+			 	snakeArr.pop();//删除旧的蛇尾
+			switch(direction){
+				case 'bottom':
+								newArr[0]++;
+								
+								break;
+				case 'right': 
+								newArr[1]++;
+							
+								break;
+				case 'top':   
+								newArr[0]--;				
+								
+								break;
+				case 'left' :
+								newArr[1]--;
+								break;
+
+			}
+			snakeArr.unshift(newArr);//加入新的蛇头数组到数组中首位
+			if(!isDie()){
+				drawSnake(snakeArr);
+			}
+			
+		}
+		var die=false;
+		function isDie(){
+			
+			var ex=snakeArr[snakeArr.length-1][0];
+			var ey=snakeArr[snakeArr.length-1][1];
+			console.log(ey,col-snakeArr.length)
+			if(ey>col-snakeArr.length||ey<0||ex>row-snakeArr.length||ex<0){
+				die=true;
+			}
+			return die;
+		}
+		function autoMove(num){
+			clearInterval(timer);
+			timer=setInterval(function() {
+				// body...
+				eatFood();
+				makeSnake(direction);
+				if(isDie()){
+					console.log(isDie())
+					clearInterval(timer);
+					var snakeArr=new Array();
+				}
+			},500);
+		}
+		window.onkeydown=function(event){
+			var e=event||window.event;
+			switch(e.keyCode){
+				case 40://下
+						if(curDirection!='top'){
+							if(direction!='bottom'){
+								direction='bottom';
+							clearInterval(timer);
+							eatFood();
+							makeSnake(direction);
+							curDirection='bottom';
+							autoMove();
+							}
+						}
+						
+						break;
+				case 39://右
+						
+						if(curDirection!='left'){
+							if(direction!='right'){
+								direction='right';
+								clearInterval(timer);
+								eatFood();
+								makeSnake(direction);
+								curDirection='right';
+								autoMove();
+							}
+							
+						}
+						break;
+				case 38://上
+						
+						if(curDirection!='bottom'){
+							if(direction!='top'){
+								direction='top';
+								clearInterval(timer);
+								eatFood();
+								makeSnake(direction);
+								curDirection='top';
+								autoMove();
+							}
+							
+						}
+						break;
+				case 37: //左
+						if(direction!='right'&&direction!='left'){
+								direction='left';
+								curDirection='left';
+								clearInterval(timer);
+								eatFood();
+								makeSnake(direction);
+								autoMove();	
+						}
+						break;
+				default: break;
+
+			}
+		}
+		var food=new Array();
+		var foodPx;
+		var foodPy;
+		function makeFood(){
+			var foodX;
+			var foodY;
+			foodX=Math.floor(Math.random()*30);
+			foodY=Math.floor(Math.random()*20);
+			while(isEqual(foodX,foodY)){
+				foodX=Math.round(Math.random()*30);
+				foodY=Math.round(Math.random()*20);
+			}
+			food[0]=new Array();
+			food[0][0]=foodY;
+			food[0][1]=foodX;
+			foodPx=foodY;
+			foodPy=foodX;
+		//	console.log(food[0]);
+			// return food[0];
+		}
+		function isEqual(foodX,foodY){
+			//debugger;
+			for(var m=0;m<snakeArr.length;m++){
+				if(snakeArr[m][0]==foodX&&snakeArr[m][1]==foodY){
+					return true;
+				}
+				else{
+					if(m+1>=snakeArr.length){
+						return false;
+					}
+					
+				}
+			}
+		}
+		makeMap();//画出表格地图
+		initSnake();//初始化蛇的身体表格坐标
+		 makeFood();
+		 drawFood();
+		 drawSnake(snakeArr);//根据蛇的表格坐标渲染蛇的身体颜色
+		 autoMove();//利用计时器移动蛇的身体
+		
+		
+	</script>
+</body>
+</html>
